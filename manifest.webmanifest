@@ -1,0 +1,11 @@
+{
+  "name": "Signons — Apprendre la LSF",
+  "short_name": "Signons",
+  "description": "Apprendre la Langue des Signes Française : leçons, alphabet, vocabulaire et révisions.",
+  "lang": "fr",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f8fc",
+  "theme_color": "#3b5bdb",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

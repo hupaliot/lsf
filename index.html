@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signons — Apprendre la LSF</title>
+  <meta name="description" content="Application pour apprendre la Langue des Signes Française : leçons, alphabet, vocabulaire, révisions espacées et quiz.">
+  <meta name="theme-color" content="#3b5bdb">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a href="#/" class="brand" aria-label="Accueil">
+      <img src="icon.svg" alt="" width="32" height="32">
+      <span>Signons</span>
+    </a>
+    <nav class="nav" aria-label="Navigation principale">
+      <a href="#/" data-route="home">Accueil</a>
+      <a href="#/lecons" data-route="lecons">Leçons</a>
+      <a href="#/alphabet" data-route="alphabet">Alphabet</a>
+      <a href="#/vocabulaire" data-route="vocabulaire">Vocabulaire</a>
+      <a href="#/revisions" data-route="revisions">Révisions</a>
+      <a href="#/quiz" data-route="quiz">Quiz</a>
+    </nav>
+  </header>
+
+  <main id="app" tabindex="-1"></main>
+
+  <footer class="footer">
+    <p>Les vidéos de référence proviennent du dictionnaire
+      <a href="https://dico.elix-lsf.fr" target="_blank" rel="noopener">Elix</a>.
+      Rien ne remplace un cours avec une personne sourde : cherchez une association près de chez vous.</p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

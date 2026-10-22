@@ -198,8 +198,14 @@ window.LSF_DATA = {
     "ECOLE", "JARDIN", "MUSIQUE", "VELO", "ZOE", "HUGO", "LEA", "NOAH", "KIWI", "QUAI", "WAGON"
   ],
 
-  /* Vocabulaire par thème. "elix" = mot à chercher dans le dictionnaire Elix
-   * (par défaut le mot lui-même). */
+  /* Vos propres vidéos, prioritaires sur les vidéos en ligne. Déposez le fichier
+   * dans videos/ puis déclarez-le ici, par exemple :
+   *   "bonjour": { src: "videos/bonjour.mp4", author: "Camille", license: "CC BY-SA 4.0" }
+   * ou simplement "bonjour": "videos/bonjour.mp4". */
+  localVideos: {},
+
+  /* Vocabulaire par thème. Les vidéos sont cherchées automatiquement sur
+   * Lingua Libre (Wikimedia Commons) ; à défaut, un lien Elix est proposé. */
   themes: [
     { id: "salutations", title: "Salutations & politesse", icon: "👋", words: [
       "bonjour", "au revoir", "merci", "s'il vous plaît", "pardon", "oui", "non",

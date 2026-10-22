@@ -1,6 +1,6 @@
 // Cache hors ligne : on sert le cache puis on le met à jour en arrière-plan.
-const CACHE = "signons-v1";
-const ASSETS = ["./", "index.html", "css/styles.css", "js/data.js", "js/app.js", "icon.svg", "manifest.webmanifest"];
+const CACHE = "signons-v2";
+const ASSETS = ["./", "index.html", "css/styles.css", "js/data.js", "js/videos.js", "js/app.js", "icon.svg", "manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)));

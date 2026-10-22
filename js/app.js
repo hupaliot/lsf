@@ -68,6 +68,45 @@
     return "https://dico.elix-lsf.fr/dictionnaire/" + encodeURIComponent(word);
   }
 
+  /* Lecteur vidéo d'un signe : vidéo libre si elle existe, sinon lien Elix. */
+  function mountVideo(container, word) {
+    container.innerHTML = `<p class="muted">Recherche d'une vidéo libre…</p>`;
+    const elix = `<a href="${elixUrl(word)}" target="_blank" rel="noopener">Voir sur Elix ↗</a>`;
+    window.LSF_VIDEOS.find(word).then((videos) => {
+      if (!container.isConnected) return;
+      if (!videos.length) {
+        container.innerHTML = `<p class="muted">Pas encore de vidéo libre pour ce signe.</p>
+          <a class="btn small" href="${elixUrl(word)}" target="_blank" rel="noopener">Voir sur Elix ↗</a>`;
+        return;
+      }
+      let i = 0;
+      function show() {
+        const v = videos[i];
+        const license = v.license
+          ? (v.licenseUrl ? `<a href="${esc(v.licenseUrl)}" target="_blank" rel="noopener">${esc(v.license)}</a>` : esc(v.license))
+          : "";
+        container.innerHTML = `
+          <video class="sign-video" src="${esc(v.src)}" autoplay loop muted playsinline controls preload="auto"></video>
+          <div class="video-tools">
+            <button class="btn small" data-rate="0.5">Ralenti</button>
+            <button class="btn small" data-rate="1">Normal</button>
+            ${videos.length > 1 ? `<button class="btn small" data-other>Autre version (${i + 1}/${videos.length})</button>` : ""}
+          </div>
+          <p class="credit">${v.author ? `Signé par ${esc(v.author)} · ` : ""}${license}${license ? " · " : ""}${
+            v.page ? `<a href="${esc(v.page)}" target="_blank" rel="noopener">${esc(v.source)}</a>` : esc(v.source)} · ${elix}</p>`;
+        const video = container.querySelector("video");
+        container.querySelectorAll("[data-rate]").forEach((b) => (b.onclick = () => { video.playbackRate = Number(b.dataset.rate); }));
+        const other = container.querySelector("[data-other]");
+        if (other) other.onclick = () => { i = (i + 1) % videos.length; show(); };
+      }
+      show();
+    }).catch(() => {
+      if (!container.isConnected) return;
+      container.innerHTML = `<p class="muted">Impossible de charger les vidéos (êtes-vous hors ligne ?).</p>
+        <a class="btn small" href="${elixUrl(word)}" target="_blank" rel="noopener">Voir sur Elix ↗</a>`;
+    });
+  }
+
   function cardKey(themeId, word) { return themeId + "|" + word; }
 
   function allWords() {
@@ -427,6 +466,7 @@
   function renderTheme(themeId) {
     const theme = DATA.themes.find((t) => t.id === themeId);
     if (!theme) { location.hash = "#/vocabulaire"; return; }
+    const open = new Set();
     function draw() {
       app.innerHTML = `
         <a class="back" href="#/vocabulaire">← Tous les thèmes</a>
@@ -440,8 +480,9 @@
             return `<li class="word">
               <span class="word-label">${esc(w)}</span>
               ${c ? `<span class="box-badge" title="Boîte de révision">Boîte ${c.box}</span>` : ""}
-              <a class="btn small" href="${elixUrl(w)}" target="_blank" rel="noopener">Vidéo ↗</a>
+              <button class="btn small" data-show="${esc(w)}" aria-expanded="${open.has(w)}">${open.has(w) ? "Masquer" : "Voir le signe"}</button>
               <button class="btn small ${c ? "" : "primary"}" data-w="${esc(w)}">${c ? "Retirer" : "+ Réviser"}</button>
+              <div class="word-video" ${open.has(w) ? "" : "hidden"}></div>
             </li>`;
           }).join("")}
         </ul>`;
@@ -453,6 +494,24 @@
         saveState();
         draw();
       };
+      app.querySelectorAll("[data-show]").forEach((b) => {
+        const w = b.dataset.show;
+        const box = b.parentElement.querySelector(".word-video");
+        if (open.has(w)) mountVideo(box, w);
+        b.onclick = () => {
+          if (open.has(w)) {
+            open.delete(w);
+            box.hidden = true;
+            box.innerHTML = "";
+          } else {
+            open.add(w);
+            box.hidden = false;
+            mountVideo(box, w);
+          }
+          b.textContent = open.has(w) ? "Masquer" : "Voir le signe";
+          b.setAttribute("aria-expanded", open.has(w));
+        };
+      });
       app.querySelectorAll("[data-w]").forEach((b) => {
         b.onclick = () => {
           const k = cardKey(theme.id, b.dataset.w);
@@ -502,7 +561,8 @@
           <p class="muted">Comment signe-t-on…</p>
           <p class="flash-word">${esc(c.word)}</p>
           <p class="muted">Faites le signe de mémoire, puis vérifiez avec la vidéo.</p>
-          <a class="btn" href="${elixUrl(c.word)}" target="_blank" rel="noopener" id="reveal">Vérifier en vidéo ↗</a>
+          <button class="btn primary" id="reveal">Voir le signe</button>
+          <div class="flash-video" hidden></div>
           <div class="grade" hidden>
             <p>Comment ça s'est passé ?</p>
             <div class="row">
@@ -515,7 +575,13 @@
         </div>`;
       const grade = app.querySelector(".grade");
       const revealGrade = () => { grade.hidden = false; app.querySelector("#skip-video").hidden = true; };
-      app.querySelector("#reveal").addEventListener("click", revealGrade);
+      app.querySelector("#reveal").onclick = () => {
+        const box = app.querySelector(".flash-video");
+        box.hidden = false;
+        app.querySelector("#reveal").hidden = true;
+        mountVideo(box, c.word);
+        revealGrade();
+      };
       app.querySelector("#skip-video").onclick = revealGrade;
       grade.querySelectorAll("[data-g]").forEach((b) => {
         b.onclick = () => {

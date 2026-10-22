@@ -338,6 +338,7 @@ h2 { font-size: 1.3rem; margin: 32px 0 12px; }
 .word-list { list-style: none; padding: 0; display: grid; gap: 8px; }
 .word {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
   padding: 10px 14px;
@@ -348,6 +349,19 @@ h2 { font-size: 1.3rem; margin: 32px 0 12px; }
 .word-label { flex: 1; font-weight: 600; }
 .word-label::first-letter, .flash-word::first-letter { text-transform: uppercase; }
 .box-badge { font-size: .75rem; padding: 2px 8px; border-radius: 999px; background: var(--good-soft); color: var(--good); }
+
+.word-video { flex-basis: 100%; }
+.sign-video {
+  display: block;
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 4 / 3;
+  margin: 8px auto 0;
+  border-radius: 10px;
+  background: #0d1020;
+}
+.video-tools { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 8px; }
+.credit { font-size: .8rem; color: var(--muted); text-align: center; margin: 6px 0 0; }
 
 /* ----- Révisions ----- */
 .flashcard { text-align: center; padding: 36px 20px; margin-top: 16px; }
